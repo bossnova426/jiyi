@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>舒尔特方格训练</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="舒尔特方格">
+    <link rel="apple-touch-icon" href="icon.png">
+</head>
+<body>
+    <div class="container">
+        <h1>舒尔特方格训练</h1>
+        
+        <!-- 控制面板 -->
+        <div class="controls">
+            <div class="size-controls">
+                <label>
+                    <input type="radio" name="grid-size" value="3" onclick="initializeGrid(3)"> 3x3
+                </label>
+                <label>
+                    <input type="radio" name="grid-size" value="4" onclick="initializeGrid(4)"> 4x4
+                </label>
+                <label>
+                    <input type="radio" name="grid-size" value="5" checked onclick="initializeGrid(5)"> 5x5
+                </label>
+                <label>
+                    <input type="radio" name="grid-size" value="6" onclick="initializeGrid(6)"> 6x6
+                </label>
+                <button onclick="initializeGrid()">重新开始</button>
+            </div>
+            
+            <div class="memory-controls">
+                <label>记忆时间(秒):
+                    <input type="number" id="memory-time" value="5" min="1" max="60">
+                </label>
+                <button id="memory-mode-btn" onclick="startMemoryMode()">开始记忆模式</button>
+            </div>
+        </div>
+
+        <!-- 状态显示 -->
+        <div id="status" class="status">当前数字: 1</div>
+
+        <!-- 网格区域 -->
+        <div id="grid" class="grid"></div>
+    </div>
+
+    <!-- 排行榜对话框 -->
+    <dialog id="leaderboard-dialog" class="leaderboard-dialog">
+        <div class="dialog-content">
+            <h2>排行榜</h2>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showLeaderboard('普通模式')">普通模式</button>
+                <button class="tab-btn" onclick="showLeaderboard('记忆模式')">记忆模式</button>
+            </div>
+            <div id="leaderboard-content"></div>
+            <button onclick="document.getElementById('leaderboard-dialog').close()">关闭</button>
+        </div>
+    </dialog>
+
+    <!-- 祝贺对话框 -->
+    <dialog id="congrats-dialog" class="congrats-dialog">
+        <div class="dialog-content">
+            <h2>恭喜！</h2>
+            <p id="congrats-message"></p>
+            <div class="name-input">
+                <label>请输入你的名字：
+                    <input type="text" id="player-name">
+                </label>
+            </div>
+            <button onclick="submitScore()">确定</button>
+        </div>
+    </dialog>
+
+    <script src="script.js"></script>
+</body>
+</html>

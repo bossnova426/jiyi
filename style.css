@@ -1,0 +1,195 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #f0f0f0;
+}
+
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.controls {
+    margin-bottom: 20px;
+}
+
+.size-controls, .memory-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.status {
+    text-align: center;
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+.grid {
+    display: grid;
+    gap: 5px;
+    margin: 0 auto;
+    max-width: 500px;
+}
+.grid button {
+    aspect-ratio: 1;
+    font-size: 1.2em;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 60px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    /* 添加文字颜色 */
+    color: #333;
+    font-weight: bold;
+}
+/* 手机端适配 */
+@media (max-width: 600px) {
+    .grid button {
+        min-width: 40px;
+        min-height: 40px;
+        font-size: 1em;
+    }
+}
+.grid button:hover {
+    background: #f0f0f0;
+}
+/* 添加iOS设备的触摸优化 */
+@media (max-width: 844px) {
+    .grid button {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        min-width: 50px;
+        min-height: 50px;
+    }
+    
+    /* 防止双击缩放 */
+    * {
+        touch-action: manipulation;
+    }
+    
+    /* 优化按钮间距 */
+    .grid {
+        gap: 8px;
+        padding: 10px;
+    }
+    
+    /* 调整控制按钮大小 */
+    .controls button,
+    .controls input {
+        min-height: 44px;
+    }
+}
+.grid button.correct {
+    background: lightgreen;
+    color: #000;  /* 点击正确后的文字颜色 */
+}
+/* 手机端适配 */
+@media (max-width: 600px) {
+    .grid button {
+        min-width: 40px;
+        min-height: 40px;
+        font-size: 1em;
+    }
+}
+.grid button:hover {
+    background: #f0f0f0;
+}
+.grid button.correct {
+    background: lightgreen;
+}
+
+dialog {
+    border: none;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 500px;
+    width: 90%;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab-btn {
+    padding: 5px 15px;
+    border: none;
+    background: #f0f0f0;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    background: #007bff;
+    color: white;
+}
+
+button {
+    padding: 5px 15px;
+    border: none;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+input[type="number"] {
+    width: 60px;
+    padding: 5px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 5px;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .size-controls, .memory-controls {
+        flex-wrap: wrap;
+    }
+
+    .grid button {
+        font-size: 1em;
+    }
+}
