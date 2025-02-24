@@ -7,11 +7,11 @@ let numbersHidden = false;
 let numberPositions = {};
 let leaderboard = [];
 let gistId = '6f89dfc61535d0705c745a211aff5cbd'; // 添加 Gist ID
+let githubToken = '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'; // 替换为你生成的 token
 let lastSyncTime = 0;        // 添加同步时间戳
 // 添加一个全局变量来存储完成时的时间
 let completionTime = null;
 let hideStartTime = null; // 添加这个变量到全局
-
 // 修改 loadLeaderboard 函数
 async function loadLeaderboard() {
     try {
@@ -33,7 +33,6 @@ async function loadLeaderboard() {
         console.log('使用本地数据');
     }
 }
-
 // 修改 saveLeaderboard 函数
 async function saveLeaderboard() {
     localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
@@ -62,7 +61,6 @@ async function saveLeaderboard() {
         console.log('本地保存成功，在线同步失败');
     }
 }
-
 // 添加数据合并函数
 function mergeLeaderboards(local, remote) {
     const merged = [...local];
@@ -125,11 +123,31 @@ function handleClick(number) {
                     startTime = startTime - (memoryTime * 1000); // 减去记忆时间
                 }
             }
-            
             const button = document.getElementById('grid').children[numberPositions[number]];
             button.classList.add('correct');
             button.textContent = number;
-            
+            // 修改 saveLeaderboard 和 loadLeaderboard 函数，添加认证头
+            async function loadLeaderboard() {
+                try {
+                    const saved = localStorage.getItem('leaderboard');
+                    leaderboard = saved ? JSON.parse(saved) : [];
+                    const response = await fetch(`https://api.github.com/gists/${gistId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${githubToken}`
+                        }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        const content = JSON.parse(data.files['leaderboard.json'].content);
+                        // 合并远程和本地数据
+                        leaderboard = mergeLeaderboards(leaderboard, content);
+                        localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+                        lastSyncTime = Date.now();
+                    }
+                } catch (error) {
+                    console.log('使用本地数据');
+                }
+            }
             if (currentNumber === gridSize * gridSize) {
                 const elapsed = (Date.now() - startTime) / 1000;
                 completionTime = elapsed; // 保存完成时的时间
@@ -206,7 +224,6 @@ function handleClick(number) {
                     startTime = hideStartTime;
                 }
             }
-            
             const button = document.getElementById('grid').children[numberPositions[number]];
             button.classList.add('correct');
             button.textContent = number;
