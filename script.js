@@ -10,6 +10,7 @@ let gistId = '6f89dfc61535d0705c745a211aff5cbd'; // 添加 Gist ID
 let lastSyncTime = 0;        // 添加同步时间戳
 // 添加一个全局变量来存储完成时的时间
 let completionTime = null;
+let hideStartTime = null; // 添加这个变量到全局
 
 // 修改 loadLeaderboard 函数
 async function loadLeaderboard() {
@@ -162,6 +163,9 @@ function checkLeaderboard(elapsed, isMemoryMode = null) {
 }
 // 开始记忆模式
 function startMemoryMode() {
+    // 防止重复触发
+    if (document.getElementById('memory-mode-btn').disabled) return;
+    
     memoryMode = true;
     initializeGrid();
     document.getElementById('memory-mode-btn').disabled = true;
@@ -374,4 +378,10 @@ function displayScores(scores, container) {
 window.onload = () => {
     initializeGrid();
     loadLeaderboard();
+    // 添加触摸事件支持
+    const memoryBtn = document.getElementById('memory-mode-btn');
+    memoryBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault(); // 阻止默认行为
+        startMemoryMode();
+    });
 };
