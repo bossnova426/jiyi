@@ -109,13 +109,17 @@ function initializeGrid(size = gridSize) {
     
     updateStatus("当前数字: 1");
 }
-
 // 处理点击事件
 function handleClick(number) {
     if (!memoryMode || (memoryMode && numbersHidden)) {
         if (number === currentNumber) {
             if (currentNumber === 1) {
                 startTime = Date.now();
+                // 记忆模式下，需要从隐藏数字时开始计时
+                if (memoryMode) {
+                    const memoryTime = parseInt(document.getElementById('memory-time').value);
+                    startTime = startTime - (memoryTime * 1000); // 减去记忆时间
+                }
             }
             
             const button = document.getElementById('grid').children[numberPositions[number]];
@@ -126,9 +130,7 @@ function handleClick(number) {
                 const elapsed = (Date.now() - startTime) / 1000;
                 const modeText = memoryMode ? "记忆模式" : "普通模式";
                 updateStatus(`${modeText}完成！用时: ${elapsed.toFixed(2)}秒`);
-                // 保存当前模式状态
-                const currentMemoryMode = memoryMode;
-                checkLeaderboard(elapsed, currentMemoryMode);
+                checkLeaderboard(elapsed, memoryMode);
             } else {
                 currentNumber++;
                 updateStatus(`当前数字: ${currentNumber}`);
@@ -136,7 +138,6 @@ function handleClick(number) {
         }
     }
 }
-
 // 修改检查记录函数签名
 function checkLeaderboard(elapsed, isMemoryMode = null) {
     const currentSize = `${gridSize}x${gridSize}`;
@@ -155,7 +156,6 @@ function checkLeaderboard(elapsed, isMemoryMode = null) {
         showCongratsDialog(elapsed, currentMode, currentSize, sameCategory.length + 1);
     }
 }
-
 // 开始记忆模式
 function startMemoryMode() {
     memoryMode = true;
@@ -178,7 +178,6 @@ function startMemoryMode() {
     
     updateCountdown();
 }
-
 // 隐藏数字
 function hideNumbers() {
     numbersHidden = true;
@@ -188,12 +187,10 @@ function hideNumbers() {
     }
     document.getElementById('memory-mode-btn').disabled = false;
 }
-
 // 更新状态显示
 function updateStatus(text) {
     document.getElementById('status').textContent = text;
 }
-
 // 检查是否创造新记录
 function checkLeaderboard(elapsed) {
     const currentSize = `${gridSize}x${gridSize}`;
