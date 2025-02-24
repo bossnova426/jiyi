@@ -262,16 +262,10 @@ function showCongratsDialog(elapsed, mode, size, rank) {
 function submitScore() {
     const name = document.getElementById('player-name').value;
     if (!name) return;
-    
-    // 使用对话框中显示的完成时间
-    const message = document.getElementById('congrats-message').innerHTML;
-    const timeMatch = message.match(/完成时间：(\d+\.\d+)秒/);
-    const elapsed = timeMatch ? parseFloat(timeMatch[1]) : 0;
-    
     const currentMode = memoryMode ? "记忆模式" : "普通模式";
     const score = {
         name,
-        time: elapsed,  // 使用完成时保存的时间
+        time: completionTime,  // 使用完成时保存的时间，而不是从对话框获取
         mode: currentMode,
         size: `${gridSize}x${gridSize}`,
         memoryTime: currentMode === "记忆模式" ? document.getElementById('memory-time').value : "0"
