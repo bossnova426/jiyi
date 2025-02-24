@@ -168,28 +168,48 @@ function startMemoryMode() {
     
     const memoryTime = parseInt(document.getElementById('memory-time').value);
     let remainingTime = memoryTime;
+    // 添加一个全局变量来记录隐藏数字的时间
+    let hideStartTime = null;
     
-    function updateCountdown() {
-        if (remainingTime > 0) {
-            updateStatus(`记忆倒计时: ${remainingTime}秒`);
-            remainingTime--;
-            setTimeout(updateCountdown, 1000);
-        } else {
-            hideNumbers();
-            updateStatus("开始按顺序点击方格！");
+    // 修改 hideNumbers 函数
+    function hideNumbers() {
+        numbersHidden = true;
+        hideStartTime = Date.now(); // 记录隐藏数字的时间
+        const buttons = document.getElementById('grid').children;
+        for (let button of buttons) {
+            button.textContent = '';
+        }
+        document.getElementById('memory-mode-btn').disabled = false;
+    }
+    // 修改 handleClick 函数
+    function handleClick(number) {
+        if (!memoryMode || (memoryMode && numbersHidden)) {
+            if (number === currentNumber) {
+                if (currentNumber === 1) {
+                    startTime = Date.now();
+                    // 记忆模式下，从隐藏数字时开始计时
+                    if (memoryMode && hideStartTime) {
+                        startTime = hideStartTime;
+                    }
+                }
+                
+                const button = document.getElementById('grid').children[numberPositions[number]];
+                button.classList.add('correct');
+                button.textContent = number;
+                
+                if (currentNumber === gridSize * gridSize) {
+                    const elapsed = (Date.now() - startTime) / 1000;
+                    completionTime = elapsed;
+                    const modeText = memoryMode ? "记忆模式" : "普通模式";
+                    updateStatus(`${modeText}完成！用时: ${elapsed.toFixed(2)}秒`);
+                    checkLeaderboard(elapsed, memoryMode);
+                } else {
+                    currentNumber++;
+                    updateStatus(`当前数字: ${currentNumber}`);
+                }
+            }
         }
     }
-    
-    updateCountdown();
-}
-// 隐藏数字
-function hideNumbers() {
-    numbersHidden = true;
-    const buttons = document.getElementById('grid').children;
-    for (let button of buttons) {
-        button.textContent = '';
-    }
-    document.getElementById('memory-mode-btn').disabled = false;
 }
 // 更新状态显示
 function updateStatus(text) {
