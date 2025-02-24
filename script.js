@@ -8,6 +8,8 @@ let numberPositions = {};
 let leaderboard = [];
 let gistId = '6f89dfc61535d0705c745a211aff5cbd'; // 添加 Gist ID
 let lastSyncTime = 0;        // 添加同步时间戳
+// 添加一个全局变量来存储完成时的时间
+let completionTime = null;
 
 // 修改 loadLeaderboard 函数
 async function loadLeaderboard() {
@@ -110,6 +112,7 @@ function initializeGrid(size = gridSize) {
     updateStatus("当前数字: 1");
 }
 // 处理点击事件
+// 修改 handleClick 函数中完成时的部分
 function handleClick(number) {
     if (!memoryMode || (memoryMode && numbersHidden)) {
         if (number === currentNumber) {
@@ -128,6 +131,7 @@ function handleClick(number) {
             
             if (currentNumber === gridSize * gridSize) {
                 const elapsed = (Date.now() - startTime) / 1000;
+                completionTime = elapsed; // 保存完成时的时间
                 const modeText = memoryMode ? "记忆模式" : "普通模式";
                 updateStatus(`${modeText}完成！用时: ${elapsed.toFixed(2)}秒`);
                 checkLeaderboard(elapsed, memoryMode);
@@ -267,7 +271,7 @@ function submitScore() {
     const currentMode = memoryMode ? "记忆模式" : "普通模式";
     const score = {
         name,
-        time: elapsed,  // 使用完成时显示的时间
+        time: elapsed,  // 使用完成时保存的时间
         mode: currentMode,
         size: `${gridSize}x${gridSize}`,
         memoryTime: currentMode === "记忆模式" ? document.getElementById('memory-time').value : "0"
