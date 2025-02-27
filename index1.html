@@ -68,10 +68,18 @@
                         '准备打开: ' + targetUrl;
 
                     try {
-                        // 直接在当前窗口打开
-                        window.location.href = targetUrl;
+                        // 针对通达信浏览器的特殊处理
+                        if (navigator.userAgent.includes('Mozilla/5.0')) {
+                            // 使用 location.replace 避免产生历史记录
+                            window.location.replace(targetUrl);
+                        } else {
+                            // 如果不是通达信浏览器，使用普通跳转
+                            window.location.href = targetUrl;
+                        }
                     } catch (e) {
-                        document.getElementById('debug').innerHTML += '<br>跳转失败: ' + e.message;
+                        // 如果上述方法都失败，尝试使用最基本的跳转
+                        document.location = targetUrl;
+                        document.getElementById('debug').innerHTML += '<br>跳转失败，使用备选方案: ' + e.message;
                     }
                     return;
                 }
