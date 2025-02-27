@@ -55,6 +55,12 @@
             const urlParams = new URLSearchParams(window.location.search);
             let stockCode = urlParams.get('code');
             
+            // 处理通达信特殊的 xxxxxx 占位符
+            if (stockCode === 'xxxxxx') {
+                document.getElementById('debug').innerHTML = '等待通达信传入股票代码...';
+                return;
+            }
+            
             const codeMatch = window.location.href.match(/code=(\d+)/);
             if (codeMatch) {
                 stockCode = codeMatch[1];
@@ -65,21 +71,17 @@
                     
                     // 添加调试信息
                     document.getElementById('debug').innerHTML = 
-                        '准备打开: ' + targetUrl;
+                        '股票代码: ' + stockCode + '<br>' +
+                        'SecurityID: ' + securityId + '<br>' +
+                        '准备跳转到: ' + targetUrl;
 
                     try {
-                        // 针对通达信浏览器的特殊处理
-                        if (navigator.userAgent.includes('Mozilla/5.0')) {
-                            // 使用 location.replace 避免产生历史记录
-                            window.location.replace(targetUrl);
-                        } else {
-                            // 如果不是通达信浏览器，使用普通跳转
-                            window.location.href = targetUrl;
-                        }
+                        // 使用 replace 方式跳转
+                        window.location.replace(targetUrl);
                     } catch (e) {
-                        // 如果上述方法都失败，尝试使用最基本的跳转
+                        document.getElementById('debug').innerHTML += '<br>跳转失败: ' + e.message;
+                        // 备选方案
                         document.location = targetUrl;
-                        document.getElementById('debug').innerHTML += '<br>跳转失败，使用备选方案: ' + e.message;
                     }
                     return;
                 }
