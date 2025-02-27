@@ -55,9 +55,12 @@
                 stockCode = codeMatch[1];
                 const securityId = codeToIdMap.get(stockCode);
                 if (securityId) {
-                    // 直接跳转，添加市场代码
+                    // 修改跳转方式
                     const market = stockCode.startsWith('6') ? 'XSHG' : 'XSHE';
-                    window.location.replace(`https://www.marketsmith.hk/webtool/quote?securityId=${securityId}&MIC=${market}&type=STOCK`);
+                    const targetUrl = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}&MIC=${market}&type=STOCK`;
+                    
+                    // 使用新窗口打开
+                    window.open(targetUrl, '_self');
                     return;
                 }
             }
