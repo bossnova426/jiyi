@@ -46,35 +46,24 @@
             });
 
         function processStockCode() {
-            // 获取URL参数中的股票代码
             const urlParams = new URLSearchParams(window.location.search);
             let stockCode = urlParams.get('code');
             
-            // 添加调试信息
-            document.getElementById('debug').innerHTML = 
-                '当前URL: ' + window.location.href + '<br>' +
-                'URL参数: ' + window.location.search + '<br>' +
-                'stockCode原始值: ' + stockCode;
-
             // 直接从URL中提取股票代码
             const codeMatch = window.location.href.match(/code=(\d+)/);
             if (codeMatch) {
                 stockCode = codeMatch[1];
-            }
-            
-            document.getElementById('debug').innerHTML += '<br>处理后的股票代码: ' + stockCode;
-
-            if (stockCode) {
                 const securityId = codeToIdMap.get(stockCode);
                 if (securityId) {
-                    document.getElementById('debug').innerHTML += '<br>找到映射ID: ' + securityId;
-                    window.location.href = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}`;
-                } else {
-                    document.getElementById('debug').innerHTML += '<br>未找到对应的股票映射';
+                    // 直接跳转，添加市场代码
+                    const market = stockCode.startsWith('6') ? 'XSHG' : 'XSHE';
+                    window.location.replace(`https://www.marketsmith.hk/webtool/quote?securityId=${securityId}&MIC=${market}&type=STOCK`);
+                    return;
                 }
-            } else {
-                document.getElementById('debug').innerHTML += '<br>未提供股票代码';
             }
+            
+            // 仅在未找到映射时显示调试信息
+            document.getElementById('debug').innerHTML = '未找到对应的股票映射';
         }
     </script>
 </body>
