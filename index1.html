@@ -5,10 +5,10 @@
     <title>股票信息</title>
 </head>
 <body>
+    <div id="debug"></div>
     <script>
         // 股票代码映射表
         const codeToIdMap = new Map();
-        const stockNameMap = new Map();
         
         // 从代码.txt中解析的数据
         const stockData = `
@@ -24,22 +24,22 @@
             const [id, name, code] = line.trim().split(/\s+/);
             if (id && name && code) {
                 codeToIdMap.set(code, id);
-                stockNameMap.set(code, name);
             }
         });
 
-        // 获取完整路径并解码
-        const fullPath = decodeURIComponent(window.location.pathname);
+        // 获取URL参数中的股票代码
+        const urlParams = new URLSearchParams(window.location.search);
+        const stockCode = urlParams.get('code');
         
-        // 解析路径中的股票代码
-        const pathMatch = fullPath.match(/##homepath##MS\/index\.html##(\d+)####STOCKNAME##$/);
-        
-        if (pathMatch && pathMatch[1]) {
-            const stockCode = pathMatch[1];
+        if (stockCode) {
             const securityId = codeToIdMap.get(stockCode);
             if (securityId) {
                 window.location.href = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}`;
+            } else {
+                document.getElementById('debug').innerHTML = '未找到对应的股票映射';
             }
+        } else {
+            document.getElementById('debug').innerHTML = '未提供股票代码';
         }
     </script>
 </body>
