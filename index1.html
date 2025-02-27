@@ -29,17 +29,33 @@
 
         // 获取URL参数中的股票代码
         const urlParams = new URLSearchParams(window.location.search);
-        const stockCode = urlParams.get('code');
+        let stockCode = urlParams.get('code');
         
+        // 处理 xxxxxx 格式
+        if (stockCode && stockCode === 'xxxxxx') {
+            // 从当前URL中获取实际的股票代码
+            const currentUrl = window.location.href;
+            const codeMatch = currentUrl.match(/code=(\d+)/);
+            if (codeMatch) {
+                stockCode = codeMatch[1];
+            }
+        }
+        
+        // 添加调试信息
+        document.getElementById('debug').innerHTML = 
+            '当前URL: ' + window.location.href + '<br>' +
+            '处理后的股票代码: ' + stockCode;
+
         if (stockCode) {
             const securityId = codeToIdMap.get(stockCode);
             if (securityId) {
+                document.getElementById('debug').innerHTML += '<br>找到映射ID: ' + securityId;
                 window.location.href = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}`;
             } else {
-                document.getElementById('debug').innerHTML = '未找到对应的股票映射';
+                document.getElementById('debug').innerHTML += '<br>未找到对应的股票映射';
             }
         } else {
-            document.getElementById('debug').innerHTML = '未提供股票代码';
+            document.getElementById('debug').innerHTML += '<br>未提供股票代码';
         }
     </script>
 </body>
