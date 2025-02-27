@@ -50,19 +50,19 @@
             const urlParams = new URLSearchParams(window.location.search);
             let stockCode = urlParams.get('code');
             
-            // 处理 xxxxxx 格式
-            if (stockCode && stockCode === 'xxxxxx') {
-                const currentUrl = window.location.href;
-                const codeMatch = currentUrl.match(/code=(\d+)/);
-                if (codeMatch) {
-                    stockCode = codeMatch[1];
-                }
-            }
-            
             // 添加调试信息
             document.getElementById('debug').innerHTML = 
                 '当前URL: ' + window.location.href + '<br>' +
-                '处理后的股票代码: ' + stockCode;
+                'URL参数: ' + window.location.search + '<br>' +
+                'stockCode原始值: ' + stockCode;
+
+            // 直接从URL中提取股票代码
+            const codeMatch = window.location.href.match(/code=(\d+)/);
+            if (codeMatch) {
+                stockCode = codeMatch[1];
+            }
+            
+            document.getElementById('debug').innerHTML += '<br>处理后的股票代码: ' + stockCode;
 
             if (stockCode) {
                 const securityId = codeToIdMap.get(stockCode);
