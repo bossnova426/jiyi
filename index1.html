@@ -45,11 +45,6 @@
                 document.getElementById('debug').innerHTML = '加载股票数据失败: ' + error;
             });
         function processStockCode() {
-            // 添加浏览器信息调试
-            document.getElementById('debug').innerHTML = 
-                '浏览器信息: ' + navigator.userAgent + '<br>' +
-                '当前URL: ' + window.location.href + '<br>';
-
             const urlParams = new URLSearchParams(window.location.search);
             let stockCode = urlParams.get('code');
             
@@ -58,12 +53,29 @@
                 stockCode = codeMatch[1];
                 const securityId = codeToIdMap.get(stockCode);
                 if (securityId) {
-                    const market = stockCode.startsWith('6') ? 'XSHG' : 'XSHE';
-                    // 添加浏览器标识参数
-                    const targetUrl = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}&MIC=${market}&type=STOCK&browser=chrome`;
+                    const apiUrl = `https://api.williamoneil.cn/api/ch/st/pf?lang=zh_CN&securityId=${securityId}`;
                     
-                    // 直接使用最简单的跳转方式
-                    document.location.href = targetUrl;
+                    // 设置请求头
+                    fetch(apiUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': '*/*',
+                            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                            'Origin': 'https://www.marketsmith.hk',
+                            'Referer': 'https://www.marketsmith.hk/webtool/no-referrer',
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.95 Safari/537.36'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 获取数据后再跳转
+                        const market = stockCode.startsWith('6') ? 'XSHG' : 'XSHE';
+                        const targetUrl = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}&MIC=${market}&type=STOCK`;
+                        document.location.href = targetUrl;
+                    })
+                    .catch(error => {
+                        document.getElementById('debug').innerHTML = '数据加载失败: ' + error;
+                    });
                     return;
                 }
             }
