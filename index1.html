@@ -46,6 +46,11 @@
             });
 
         function processStockCode() {
+            // 添加浏览器信息调试
+            document.getElementById('debug').innerHTML = 
+                '浏览器信息: ' + navigator.userAgent + '<br>' +
+                '当前URL: ' + window.location.href + '<br>';
+
             const urlParams = new URLSearchParams(window.location.search);
             let stockCode = urlParams.get('code');
             
@@ -55,18 +60,26 @@
                 stockCode = codeMatch[1];
                 const securityId = codeToIdMap.get(stockCode);
                 if (securityId) {
-                    // 修改跳转方式
                     const market = stockCode.startsWith('6') ? 'XSHG' : 'XSHE';
                     const targetUrl = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}&MIC=${market}&type=STOCK`;
                     
-                    // 使用新窗口打开
-                    window.open(targetUrl, '_self');
+                    // 添加跳转信息调试
+                    document.getElementById('debug').innerHTML += 
+                        '<br>准备跳转到: ' + targetUrl + '<br>' +
+                        '股票代码: ' + stockCode + '<br>' +
+                        'SecurityID: ' + securityId + '<br>' +
+                        '市场: ' + market;
+
+                    try {
+                        window.open(targetUrl, '_self');
+                    } catch (e) {
+                        document.getElementById('debug').innerHTML += '<br>跳转错误: ' + e.message;
+                    }
                     return;
                 }
             }
             
-            // 仅在未找到映射时显示调试信息
-            document.getElementById('debug').innerHTML = '未找到对应的股票映射';
+            document.getElementById('debug').innerHTML += '<br>未找到对应的股票映射';
         }
     </script>
 </body>
