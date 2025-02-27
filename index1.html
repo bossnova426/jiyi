@@ -23,8 +23,16 @@
         
         // 从GitHub加载股票数据
         fetch('https://raw.githubusercontent.com/bossnova426/jiyi/main/stockdata.txt')
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('数据文件加载失败: ' + response.status);
+                }
+                return response.text();
+            })
             .then(data => {
+                // 添加调试信息
+                document.getElementById('debug').innerHTML = '正在加载映射数据...';
+                
                 // 初始化映射
                 data.trim().split('\n').forEach(line => {
                     const [id, name, code] = line.trim().split(/\s+/);
@@ -33,18 +41,16 @@
                     }
                 });
                 
-                // 添加调试信息
+                // 显示加载成功信息
                 document.getElementById('debug').innerHTML = 
-                    '已加载映射数据，共 ' + codeToIdMap.size + ' 条<br>' +
-                    '映射内容: ' + Array.from(codeToIdMap.entries()).join('<br>');
-                    // 处理URL参数
-                    processStockCode();
+                    '映射数据加载成功，共 ' + codeToIdMap.size + ' 条记录<br>' +
+                    '开始处理跳转...';
+                // 处理URL参数
+                processStockCode();
             })
             .catch(error => {
                 document.getElementById('debug').innerHTML = '加载映射数据失败: ' + error;
             });
-        // 移除直接调用
-        // processStockCode();
         function processStockCode() {
             const urlParams = new URLSearchParams(window.location.search);
             let stockCode = urlParams.get('code');
