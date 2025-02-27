@@ -52,6 +52,15 @@
                 document.getElementById('debug').innerHTML = '加载映射数据失败: ' + error;
             });
         function processStockCode() {
+            // 检查是否在通达信浏览器中
+            const isTdxBrowser = navigator.userAgent.includes('Mozilla/5.0') && 
+                               window.location.href.includes('bossnova426.github.io');
+            
+            if (!isTdxBrowser) {
+                document.getElementById('debug').innerHTML = '请在通达信浏览器中打开此页面';
+                return;
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             let stockCode = urlParams.get('code');
             
@@ -75,14 +84,8 @@
                         'SecurityID: ' + securityId + '<br>' +
                         '准备跳转到: ' + targetUrl;
 
-                    try {
-                        // 使用 replace 方式跳转
-                        window.location.replace(targetUrl);
-                    } catch (e) {
-                        document.getElementById('debug').innerHTML += '<br>跳转失败: ' + e.message;
-                        // 备选方案
-                        document.location = targetUrl;
-                    }
+                    // 仅在通达信浏览器中跳转
+                    window.location.replace(targetUrl);
                     return;
                 }
             }
