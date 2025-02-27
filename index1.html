@@ -50,20 +50,23 @@
                 stockCode = codeMatch[1];
                 const securityId = codeToIdMap.get(stockCode);
                 if (securityId) {
-                    // 直接跳转到目标页面
                     const market = stockCode.startsWith('6') ? 'XSHG' : 'XSHE';
                     const targetUrl = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}&MIC=${market}&type=STOCK`;
                     
-                    // 添加调试信息
-                    document.getElementById('debug').innerHTML = 
-                        '股票代码: ' + stockCode + '<br>' +
-                        'SecurityID: ' + securityId + '<br>' +
-                        '准备跳转到: ' + targetUrl;
-
-                    // 使用延时跳转，确保调试信息能显示
-                    setTimeout(() => {
-                        window.location.href = targetUrl;
-                    }, 500);
+                    // 创建iframe
+                    const iframe = document.createElement('iframe');
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.border = 'none';
+                    iframe.style.position = 'fixed';
+                    iframe.style.top = '0';
+                    iframe.style.left = '0';
+                    iframe.src = targetUrl;
+                    
+                    // 清空页面内容
+                    document.body.innerHTML = '';
+                    // 添加iframe
+                    document.body.appendChild(iframe);
                     return;
                 }
             }
