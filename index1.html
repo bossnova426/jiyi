@@ -53,29 +53,20 @@
                 stockCode = codeMatch[1];
                 const securityId = codeToIdMap.get(stockCode);
                 if (securityId) {
-                    const apiUrl = `https://api.williamoneil.cn/api/ch/st/pf?lang=zh_CN&securityId=${securityId}`;
+                    // 直接跳转到目标页面
+                    const market = stockCode.startsWith('6') ? 'XSHG' : 'XSHE';
+                    const targetUrl = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}&MIC=${market}&type=STOCK`;
                     
-                    // 设置请求头
-                    fetch(apiUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': '*/*',
-                            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-                            'Origin': 'https://www.marketsmith.hk',
-                            'Referer': 'https://www.marketsmith.hk/webtool/no-referrer',
-                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.95 Safari/537.36'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // 获取数据后再跳转
-                        const market = stockCode.startsWith('6') ? 'XSHG' : 'XSHE';
-                        const targetUrl = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}&MIC=${market}&type=STOCK`;
-                        document.location.href = targetUrl;
-                    })
-                    .catch(error => {
-                        document.getElementById('debug').innerHTML = '数据加载失败: ' + error;
-                    });
+                    // 添加调试信息
+                    document.getElementById('debug').innerHTML = 
+                        '股票代码: ' + stockCode + '<br>' +
+                        'SecurityID: ' + securityId + '<br>' +
+                        '准备跳转到: ' + targetUrl;
+
+                    // 使用延时跳转，确保调试信息能显示
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 500);
                     return;
                 }
             }
