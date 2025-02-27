@@ -44,7 +44,6 @@
             .catch(error => {
                 document.getElementById('debug').innerHTML = '加载股票数据失败: ' + error;
             });
-
         function processStockCode() {
             // 添加浏览器信息调试
             document.getElementById('debug').innerHTML = 
@@ -54,7 +53,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             let stockCode = urlParams.get('code');
             
-            // 直接从URL中提取股票代码
             const codeMatch = window.location.href.match(/code=(\d+)/);
             if (codeMatch) {
                 stockCode = codeMatch[1];
@@ -65,16 +63,22 @@
                     
                     // 添加跳转信息调试
                     document.getElementById('debug').innerHTML += 
-                        '<br>准备跳转到: ' + targetUrl + '<br>' +
-                        '股票代码: ' + stockCode + '<br>' +
-                        'SecurityID: ' + securityId + '<br>' +
-                        '市场: ' + market;
+                        '<br>准备跳转到: ' + targetUrl;
+                    // 创建一个iframe来预加载目标页面
+                    const preloadFrame = document.createElement('iframe');
+                    preloadFrame.style.display = 'none';
+                    preloadFrame.src = targetUrl;
+                    document.body.appendChild(preloadFrame);
 
-                    try {
-                        window.open(targetUrl, '_self');
-                    } catch (e) {
-                        document.getElementById('debug').innerHTML += '<br>跳转错误: ' + e.message;
-                    }
+                    // 延迟跳转，给预加载一些时间
+                    setTimeout(() => {
+                        try {
+                            document.location.replace(targetUrl);
+                        } catch (e) {
+                            window.location.href = targetUrl;
+                        }
+                    }, 1000);
+                    
                     return;
                 }
             }
