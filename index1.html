@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>股票信息</title>
+    <style>
+        body {
+            color: #ffffff;  /* 白色文字 */
+            background-color: #000000;  /* 黑色背景 */
+        }
+        #debug {
+            color: #00ff00;  /* 绿色调试信息 */
+            font-size: 14px;
+            margin: 20px;
+        }
+    </style>
 </head>
 <body>
     <div id="debug"></div>
@@ -10,52 +21,55 @@
         // 股票代码映射表
         const codeToIdMap = new Map();
         
-        // 从代码.txt中解析的数据
-        const stockData = `
-10000804	*ST东洋	002086
-10012965	实朴检测	301228
-10000723	统一股份	600506
-10003176	海利尔	603639
-10001214	海大集团	002311
-        `;
+        // 从外部文件加载股票数据
+        fetch('stockdata.txt')
+            .then(response => response.text())
+            .then(data => {
+                // 初始化映射
+                data.trim().split('\n').forEach(line => {
+                    const [id, name, code] = line.trim().split(/\s+/);
+                    if (id && name && code) {
+                        codeToIdMap.set(code, id);
+                    }
+                });
 
-        // 初始化映射
-        stockData.trim().split('\n').forEach(line => {
-            const [id, name, code] = line.trim().split(/\s+/);
-            if (id && name && code) {
-                codeToIdMap.set(code, id);
+                // 处理URL参数
+                processStockCode();
+            })
+            .catch(error => {
+                document.getElementById('debug').innerHTML = '加载股票数据失败: ' + error;
+            });
+
+        function processStockCode() {
+            // 获取URL参数中的股票代码
+            const urlParams = new URLSearchParams(window.location.search);
+            let stockCode = urlParams.get('code');
+            
+            // 处理 xxxxxx 格式
+            if (stockCode && stockCode === 'xxxxxx') {
+                const currentUrl = window.location.href;
+                const codeMatch = currentUrl.match(/code=(\d+)/);
+                if (codeMatch) {
+                    stockCode = codeMatch[1];
+                }
             }
-        });
+            
+            // 添加调试信息
+            document.getElementById('debug').innerHTML = 
+                '当前URL: ' + window.location.href + '<br>' +
+                '处理后的股票代码: ' + stockCode;
 
-        // 获取URL参数中的股票代码
-        const urlParams = new URLSearchParams(window.location.search);
-        let stockCode = urlParams.get('code');
-        
-        // 处理 xxxxxx 格式
-        if (stockCode && stockCode === 'xxxxxx') {
-            // 从当前URL中获取实际的股票代码
-            const currentUrl = window.location.href;
-            const codeMatch = currentUrl.match(/code=(\d+)/);
-            if (codeMatch) {
-                stockCode = codeMatch[1];
-            }
-        }
-        
-        // 添加调试信息
-        document.getElementById('debug').innerHTML = 
-            '当前URL: ' + window.location.href + '<br>' +
-            '处理后的股票代码: ' + stockCode;
-
-        if (stockCode) {
-            const securityId = codeToIdMap.get(stockCode);
-            if (securityId) {
-                document.getElementById('debug').innerHTML += '<br>找到映射ID: ' + securityId;
-                window.location.href = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}`;
+            if (stockCode) {
+                const securityId = codeToIdMap.get(stockCode);
+                if (securityId) {
+                    document.getElementById('debug').innerHTML += '<br>找到映射ID: ' + securityId;
+                    window.location.href = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}`;
+                } else {
+                    document.getElementById('debug').innerHTML += '<br>未找到对应的股票映射';
+                }
             } else {
-                document.getElementById('debug').innerHTML += '<br>未找到对应的股票映射';
+                document.getElementById('debug').innerHTML += '<br>未提供股票代码';
             }
-        } else {
-            document.getElementById('debug').innerHTML += '<br>未提供股票代码';
         }
     </script>
 </body>
