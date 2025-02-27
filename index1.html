@@ -40,7 +40,6 @@
 
         // 直接处理URL参数
         processStockCode();
-
         function processStockCode() {
             const urlParams = new URLSearchParams(window.location.search);
             let stockCode = urlParams.get('code');
@@ -53,20 +52,24 @@
                     const market = stockCode.startsWith('6') ? 'XSHG' : 'XSHE';
                     const targetUrl = `https://www.marketsmith.hk/webtool/quote?securityId=${securityId}&MIC=${market}&type=STOCK`;
                     
-                    // 创建iframe
-                    const iframe = document.createElement('iframe');
-                    iframe.style.width = '100%';
-                    iframe.style.height = '100%';
-                    iframe.style.border = 'none';
-                    iframe.style.position = 'fixed';
-                    iframe.style.top = '0';
-                    iframe.style.left = '0';
-                    iframe.src = targetUrl;
-                    
-                    // 清空页面内容
-                    document.body.innerHTML = '';
-                    // 添加iframe
-                    document.body.appendChild(iframe);
+                    // 添加调试信息
+                    document.getElementById('debug').innerHTML = 
+                        '准备打开: ' + targetUrl;
+
+                    try {
+                        // 尝试使用新窗口打开
+                        const newWindow = window.open(targetUrl, '_blank', 'location=yes,height=800,width=1200,scrollbars=yes,status=yes');
+                        if (newWindow) {
+                            // 关闭当前窗口
+                            window.close();
+                        } else {
+                            // 如果新窗口打开失败，使用替代方法
+                            document.location.replace(targetUrl);
+                        }
+                    } catch (e) {
+                        // 如果出错，使用最基本的跳转
+                        window.location.href = targetUrl;
+                    }
                     return;
                 }
             }
