@@ -68,18 +68,10 @@
                         '准备打开: ' + targetUrl;
 
                     try {
-                        // 尝试使用新窗口打开
-                        const newWindow = window.open(targetUrl, '_blank', 'location=yes,height=800,width=1200,scrollbars=yes,status=yes');
-                        if (newWindow) {
-                            // 关闭当前窗口
-                            window.close();
-                        } else {
-                            // 如果新窗口打开失败，使用替代方法
-                            document.location.replace(targetUrl);
-                        }
-                    } catch (e) {
-                        // 如果出错，使用最基本的跳转
+                        // 直接在当前窗口打开
                         window.location.href = targetUrl;
+                    } catch (e) {
+                        document.getElementById('debug').innerHTML += '<br>跳转失败: ' + e.message;
                     }
                     return;
                 }
